@@ -1,0 +1,84 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+
+{% if error %}
+
+    <p style="color:red;">
+        {{ error }}
+    </p>
+
+{% endif %}
+
+<h2>Register</h2>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <input 
+        type="text"
+        name="username"
+        placeholder="Enter username"
+    >
+
+    <br><br>
+
+    <input 
+        type="email"
+        name="email"
+        placeholder="Enter email"
+    >
+
+    <br><br>
+
+    <input 
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Enter password"
+    >
+    <button type="button" onclick="togglePassword()">
+        Show
+    </button>
+
+    <br><br>
+
+    <input 
+        type="password"
+        id="confirm_password"
+        name="confirm_password"
+        placeholder="Confirm password"
+    >
+    <button type="button" onclick="toggleConfirmPassword()">
+        Show
+    </button>
+
+    <br><br>
+
+    <button>Register</button>
+
+</form>
+
+<script>
+    function togglePassword(){
+        const passwordInput = document.getElementById('password');
+        if(passwordInput.type == 'password'){
+            passwordInput.type = 'text';         
+        }
+        else{
+            passwordInput.type = 'password';
+        }
+    }
+
+    function toggleConfirmPassword(){
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        if(confirmPasswordInput.type == 'password'){
+            confirmPasswordInput.type = 'text';
+        }
+        else{
+            confirmPasswordInput.type = 'password';
+        }
+    }
+</script>
+{% endblock %}
