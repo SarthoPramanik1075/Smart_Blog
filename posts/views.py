@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.conf import settings
 from .models import Post
@@ -27,8 +28,6 @@ def register(request):
         if User.objects.filter(email=email).exists():
             return render(request, 'posts/register.html', {'error': 'Email already exists.'})
         
-        #create user
-        User.objects.create_user(username=username, password=password, email=email)
         #code setup for email verification
         verification_code = random.randint(100000, 999999)
         send_mail(
@@ -38,9 +37,45 @@ def register(request):
         [email],
         fail_silently=False,
     )
+        
+        request.session['verification_code'] = str(verification_code)
+        request.session['username'] = username
+        request.session['email'] = email
+        request.session['password'] = password
 
-        return redirect('home')
+        return redirect('verify_email')
     return render(request, 'posts/register.html')
+
+def verify_email(request):
+    if request.method == 'POST':
+        entered_code = request.POST['code']
+        saved_code = request.session.get('verification_code')
+        if entered_code == saved_code:
+            username = request.session.get('username')
+            email = request.session.get('email')
+            password = request.session.get('password')
+
+            User.objects.create_user(username=username, password=password, email=email)
+            return redirect('login')
+        else:
+            return render(request, 'posts/verify_email.html', {'error': 'Invalid verification code.'})
+    return render(request, 'posts/verify_email.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user=authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request,user)
+            return redirect('home')
+        else:
+            return render(request, 'posts/login.html', {'error': 'Invalid username or password.'})
+    return render(request, 'posts/login.html')
+
+
 
 def post_detail(request, id):
     post=get_object_or_404(Post, id=id)

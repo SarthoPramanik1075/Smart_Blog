@@ -1,11 +1,13 @@
 from django.urls import path
 from .views import (
     home,
+    login_view,
     post_detail,
     create_post,
     delete_post,
     update_post,
-    register
+    register,
+    verify_email
 )
 
 urlpatterns = [
@@ -15,4 +17,6 @@ urlpatterns = [
     path('delete/<int:id>/', delete_post, name='delete_post'),
     path('update/<int:id>/', update_post, name='update_post'),
     path('register/', register, name='register'),
+    path('verify_email/', verify_email, name='verify_email'),
+    path('login/', login_view, name='login'),
 ]
