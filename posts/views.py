@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.conf import settings
 from .models import Post
@@ -61,6 +62,7 @@ def verify_email(request):
             return render(request, 'posts/verify_email.html', {'error': 'Invalid verification code.'})
     return render(request, 'posts/verify_email.html')
 
+@login_required
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -75,12 +77,74 @@ def login_view(request):
             return render(request, 'posts/login.html', {'error': 'Invalid username or password.'})
     return render(request, 'posts/login.html')
 
+def forget_password(request):
+    if request.method == 'POST':
+        email= request.POST['email']
+        if not User.objects.filter(email=email).exists():
+            return render(request, 'posts/forget_password.html', {'error': 'Email does not exist.'})
 
+        reset_code = random.randint(100000, 999999)
+        request.session['reset_code'] = str(reset_code)
+        request.session['reset_email'] = email
 
-def post_detail(request, id):
-    post=get_object_or_404(Post, id=id)
-    return render(request, 'posts/post_detail.html', {'post': post})
+        send_mail(
+        'Your Password Reset Code',
+        f'Your password reset code is: {reset_code}',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+        )
+        return redirect('reset_password')
+    return render(request, 'posts/forget_password.html')
 
+def verify_reset_code(request):
+
+    if request.method == "POST":
+
+        entered_code = request.POST['code']
+        saved_code = request.session.get('reset_code')
+
+        if entered_code == saved_code:
+            return redirect('reset_password')
+
+        return render(request, 'posts/verify_reset_code.html', {
+            'error': 'Invalid reset code'
+        })
+
+    return render(request, 'posts/verify_reset_code.html')
+
+def reset_password(request):
+
+    if request.method == "POST":
+
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+
+        if password != confirm_password:
+            return render(request, 'posts/reset_password.html', {
+                'error': 'Passwords do not match'
+            })
+
+        if len(password) < 8:
+            return render(request, 'posts/reset_password.html', {
+                'error': 'Password must be at least 8 characters'
+            })
+
+        email = request.session.get('reset_email')
+
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+
+        # Clear reset session data
+        request.session.pop('reset_email', None)
+        request.session.pop('reset_code', None)
+
+        return redirect('login')
+
+    return render(request, 'posts/reset_password.html')
+
+@login_required
 def create_post(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -92,18 +156,32 @@ def create_post(request):
     
     return render(request, 'posts/create_post.html')
 
+@login_required
 def delete_post(request, id):
     post = get_object_or_404(Post, id=id)
+
+    if request.user != post.author:
+        return HttpResponse("You are not allowed to delete this post.")
+
     if request.method == 'POST':
         post.delete()
         return redirect('home')
     return render(request, 'posts/delete_post.html', {'post': post})
 
+@login_required
 def update_post(request, id):
     post = get_object_or_404(Post, id=id)
+
+    if request.user != post.author:
+        return HttpResponse("You are not allowed to edit this post.")
+
     if request.method == 'POST':
         post.title = request.POST.get('title')
         post.content = request.POST.get('content')
         post.save()
         return redirect('post_detail', id=post.id)
     return render(request, 'posts/update_post.html', {'post': post})
+
+def post_detail(request, id):
+    post=get_object_or_404(Post, id=id)
+    return render(request, 'posts/post_detail.html', {'post': post})

@@ -7,7 +7,10 @@ from .views import (
     delete_post,
     update_post,
     register,
-    verify_email
+    verify_email,
+    forget_password,
+    reset_password,
+    verify_reset_code,
 )
 
 urlpatterns = [
@@ -19,4 +22,7 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('verify_email/', verify_email, name='verify_email'),
     path('login/', login_view, name='login'),
+   path('forgot_password/', forget_password, name='forgot_password'),
+    path('reset_password/', reset_password, name='reset_password'),
+    path('verify_reset_code/', verify_reset_code, name='verify_reset_code'),
 ]
