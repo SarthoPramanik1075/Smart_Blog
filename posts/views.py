@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.conf import settings
-from .models import Post
+from .models import Post, Reaction, Comment
 from django.core.mail import send_mail
 import random
 
@@ -185,3 +185,33 @@ def update_post(request, id):
 def post_detail(request, id):
     post=get_object_or_404(Post, id=id)
     return render(request, 'posts/post_detail.html', {'post': post})
+
+@login_required
+def react_post(request, id, reaction_type):
+    post = get_object_or_404(Post, id=id)
+
+    reaction, created = Reaction.objects.get_object_or_create(
+        user=request.user,
+        post=post,
+        default={'reaction_type': reaction_type}
+        )
+    if not created:
+        if reaction.reaction_type == reaction_type:
+            reaction.save()
+    return redirect('post_detail', id=id)
+
+@login_required
+def add_comment(request, id):
+
+    post = get_object_or_404(Post, id=id)
+
+    if request.method == "POST":
+        content = request.POST['content']
+
+        Comment.objects.create(
+            post=post,
+            author=request.user,
+            content=content
+        )
+
+    return redirect('post_detail', id=post.id)
