@@ -8,6 +8,18 @@ from .models import Post, Reaction, Comment
 from django.core.mail import send_mail
 import random
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import PostSerializer
+
+
+@api_view(['GET'])
+def post_list_api(request):
+    posts = Post.objects.all()
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+
 # Create your views here.
 def home(request):
     posts = Post.objects.all()

@@ -6,6 +6,7 @@ from .views import (
     post_detail,
     create_post,
     delete_post,
+    post_list_api,
     react_post,
     update_post,
     register,
@@ -29,4 +30,5 @@ urlpatterns = [
     path('verify_reset_code/', verify_reset_code, name='verify_reset_code'),
     path('post/<int:id>/react/<str:reaction_type>/', react_post, name='react_post'),
     path('post/<int:id>/comment/', add_comment, name='add_comment'),
+    path('api/posts/', post_list_api, name='post_list_api'),
 ]
