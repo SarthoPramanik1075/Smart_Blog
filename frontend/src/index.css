@@ -1,1 +1,181 @@
 @import "tailwindcss";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(216, 111, 69, 0.18), transparent 32rem),
+      radial-gradient(circle at 88% 4%, rgba(18, 52, 59, 0.12), transparent 30rem),
+      #f6f3ee;
+  }
+
+  ::selection {
+    background: #d86f45;
+    color: #fff;
+  }
+}
+
+@layer components {
+  .app-shell {
+    min-height: 100vh;
+    color: #203138;
+  }
+
+  .app-container {
+    width: min(100% - 2rem, 72rem);
+    margin-inline: auto;
+  }
+
+  .glass-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    border-bottom: 1px solid rgba(222, 216, 206, 0.85);
+    background: rgba(255, 252, 247, 0.9);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 14px 40px rgba(18, 52, 59, 0.07);
+  }
+
+  .brand-mark {
+    display: inline-grid;
+    height: 2.5rem;
+    width: 2.5rem;
+    place-items: center;
+    border-radius: 0.5rem;
+    background: #12343b;
+    color: #fff;
+    font-weight: 950;
+    box-shadow: 0 10px 24px rgba(18, 52, 59, 0.22);
+  }
+
+  .nav-link {
+    border-radius: 0.55rem;
+    padding: 0.62rem 0.9rem;
+    color: #405a62;
+    transition: 160ms ease;
+  }
+
+  .nav-link:hover {
+    background: #eee7db;
+    color: #12343b;
+  }
+
+  .nav-link-active {
+    background: #12343b;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(18, 52, 59, 0.18);
+  }
+
+  .surface {
+    border: 1px solid rgba(199, 191, 180, 0.9);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 18px 50px rgba(18, 52, 59, 0.1);
+  }
+
+  .post-card {
+    border: 1px solid rgba(222, 216, 206, 0.95);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 12px 32px rgba(18, 52, 59, 0.07);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .post-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(216, 111, 69, 0.45);
+    box-shadow: 0 22px 48px rgba(18, 52, 59, 0.12);
+  }
+
+  .btn {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: 0.55rem;
+    padding: 0.7rem 1rem;
+    font-weight: 800;
+    transition: 160ms ease;
+  }
+
+  .btn-primary {
+    background: #d86f45;
+    color: #fff;
+    box-shadow: 0 12px 26px rgba(216, 111, 69, 0.28);
+  }
+
+  .btn-primary:hover {
+    background: #c65f38;
+    transform: translateY(-1px);
+  }
+
+  .btn-dark {
+    background: #12343b;
+    color: #fff;
+    box-shadow: 0 12px 26px rgba(18, 52, 59, 0.22);
+  }
+
+  .btn-dark:hover {
+    background: #0b252b;
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    border: 1px solid #c7bfb4;
+    background: rgba(255, 255, 255, 0.76);
+    color: #12343b;
+  }
+
+  .btn-ghost:hover {
+    background: #eee7db;
+  }
+
+  .field {
+    width: 100%;
+    border: 1px solid #c7bfb4;
+    border-radius: 0.6rem;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 0.9rem 1rem;
+    color: #203138;
+    outline: none;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+
+  .field:focus {
+    border-color: #d86f45;
+    box-shadow: 0 0 0 4px rgba(216, 111, 69, 0.14);
+  }
+
+  .badge {
+    border-radius: 999px;
+    background: #f0e8dc;
+    padding: 0.38rem 0.75rem;
+    color: #405a62;
+    font-size: 0.85rem;
+    font-weight: 800;
+  }
+
+  .alert-error {
+    border: 1px solid #fecaca;
+    border-radius: 0.6rem;
+    background: #fff1f2;
+    padding: 0.9rem;
+    color: #be123c;
+    font-weight: 800;
+  }
+
+  .alert-success {
+    border: 1px solid #bbf7d0;
+    border-radius: 0.6rem;
+    background: #f0fdf4;
+    padding: 0.9rem;
+    color: #15803d;
+    font-weight: 800;
+  }
+}
